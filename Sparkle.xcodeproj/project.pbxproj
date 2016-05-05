@@ -2027,8 +2027,6 @@
 			isa = XCBuildConfiguration;
 			baseConfigurationReference = FA1941CA0D94A70100DD942E /* ConfigFrameworkDebug.xcconfig */;
 			buildSettings = {
-				DYLIB_INSTALL_NAME_BASE = "@executable_path";
-				LD_DYLIB_INSTALL_NAME = "$(DYLIB_INSTALL_NAME_BASE:standardizepath)/../Frameworks/$(EXECUTABLE_PATH)";
 			};
 			name = Coverage;
 		};
@@ -2082,8 +2080,6 @@
 			isa = XCBuildConfiguration;
 			baseConfigurationReference = FA1941CA0D94A70100DD942E /* ConfigFrameworkDebug.xcconfig */;
 			buildSettings = {
-				DYLIB_INSTALL_NAME_BASE = "@executable_path";
-				LD_DYLIB_INSTALL_NAME = "$(DYLIB_INSTALL_NAME_BASE:standardizepath)/../Frameworks/$(EXECUTABLE_PATH)";
 			};
 			name = Debug;
 		};
@@ -2091,8 +2087,6 @@
 			isa = XCBuildConfiguration;
 			baseConfigurationReference = FA1941D50D94A70100DD942E /* ConfigFrameworkRelease.xcconfig */;
 			buildSettings = {
-				DYLIB_INSTALL_NAME_BASE = "@executable_path";
-				LD_DYLIB_INSTALL_NAME = "$(DYLIB_INSTALL_NAME_BASE:standardizepath)/../Frameworks/$(EXECUTABLE_PATH)";
 			};
 			name = Release;
 		};
