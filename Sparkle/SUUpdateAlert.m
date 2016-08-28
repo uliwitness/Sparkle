@@ -259,8 +259,9 @@
 - (void)webView:(WebView *)__unused sender decidePolicyForNavigationAction:(NSDictionary *)__unused actionInformation request:(NSURLRequest *)request frame:(WebFrame *)__unused frame decisionListener:(id<WebPolicyDecisionListener>)listener
 {
     NSURL *requestURL = request.URL;
-    NSString *scheme = requestURL.scheme;
-    BOOL whitelistedSafe = [@"http" isEqualToString:scheme] || [@"https" isEqualToString:scheme] || [@"about:blank" isEqualToString:requestURL.absoluteString];
+    NSString *scheme = requestURL.scheme ? requestURL.scheme : @"";
+    NSString *absString = requestURL.absoluteString ? requestURL.absoluteString : @"";
+    BOOL whitelistedSafe = [@"http" isEqualToString:scheme] || [@"https" isEqualToString:scheme] || [@"about:blank" isEqualToString: absString];
 
     // Do not allow redirects to dangerous protocols such as file://
     if (!whitelistedSafe) {
