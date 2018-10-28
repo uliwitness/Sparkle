@@ -10,7 +10,7 @@
 #import "SUConstants.h"
 #include <sys/mount.h> // For statfs for isRunningOnReadOnlyVolume
 #import "SULog.h"
-
+#import "SUSignatures.h"
 
 #include "AppKitPrevention.h"
 
@@ -26,6 +26,7 @@
 @property (nonatomic, readonly) BOOL isMainBundle;
 @property (copy) NSString *defaultsDomain;
 @property (assign) BOOL usesStandardUserDefaults;
+@property (readonly, copy) NSString *publicDSAKey;
 
 @end
 
@@ -82,7 +83,7 @@
     name = [self objectForInfoDictionaryKey:(__bridge NSString *)kCFBundleNameKey];
 	if (name && name.length > 0) return name;
 
-    return [[[NSFileManager defaultManager] displayNameAtPath:[self.bundle bundlePath]] stringByDeletingPathExtension];
+    return [[[NSFileManager defaultManager] displayNameAtPath:[self bundlePath]] stringByDeletingPathExtension];
 }
 
 - (NSString *__nonnull)version
@@ -109,6 +110,11 @@
     return (statfs_info.f_flags & MNT_RDONLY) != 0;
 }
 
+- (NSString *__nullable)publicEDKey
+{
+    return [self objectForInfoDictionaryKey:SUPublicEDKeyKey];
+}
+
 - (NSString *__nullable)publicDSAKey
 {
     // Maybe the key is just a string in the Info.plist.
@@ -127,7 +133,17 @@
     if (!keyPath) {
         return nil;
     }
-    return [NSString stringWithContentsOfFile:keyPath encoding:NSASCIIStringEncoding error:nil];
+    NSError *error = nil;
+    key = [NSString stringWithContentsOfFile:keyPath encoding:NSASCIIStringEncoding error:&error];
+    if (error) {
+        SULog(SULogLevelError, @"Error loading %@: %@", keyPath, error);
+    }
+    return key;
+}
+
+- (SUPublicKeys *)publicKeys
+{
+    return [[SUPublicKeys alloc] initWithDsa:[self publicDSAKey] ed:[self publicEDKey]];
 }
 
 - (NSString * __nullable)publicDSAKeyFileKey
@@ -156,7 +172,7 @@
 
 - (BOOL)boolForInfoDictionaryKey:(NSString *)key
 {
-    return [[self objectForInfoDictionaryKey:key] boolValue];
+    return [(NSNumber *)[self objectForInfoDictionaryKey:key] boolValue];
 }
 
 - (id)objectForUserDefaultsKey:(NSString *)defaultName
